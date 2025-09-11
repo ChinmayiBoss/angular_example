@@ -4,31 +4,22 @@ on:
   push:
     branches:
       - main
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
         
-      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
           
-      # 3. Install dependencies and Angular CLI
-      - name: Install dependencies
+      - name: Install & Build
         run: |
           npm install --force
-          run: npm run build
-          script: sudo apt update
-                  sudo apt install -y nginx
-                  sudo systemctl start -nginx
-      # 5. Copy build files to EC2
+          npm run build
       - name: Copy build files to EC2
         uses: appleboy/scp-action@master
         with:
@@ -37,4 +28,3 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           source: "dist/**"
           target: "/var/www/test/angular_example/"
-         
