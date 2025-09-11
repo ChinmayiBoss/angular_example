@@ -24,9 +24,9 @@ jobs:
       - name: Install dependencies
         run: |
           npm install --force
-          npm install --save-dev @angular-devkit/build-angular@17.2.3
           run: npm run build
-          script: sudo apt install -y nginx
+          script: sudo apt update
+                  sudo apt install -y nginx
                   sudo systemctl start -nginx
       # 5. Copy build files to EC2
       - name: Copy build files to EC2
