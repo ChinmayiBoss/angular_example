@@ -24,6 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm install --force
+          npm install --save-dev @angular-devkit/build-angular@17.2.3
           run: npm run build
           script: sudo apt install -y nginx
                   sudo systemctl start -nginx
