@@ -1,5 +1,4 @@
 name: Deploy Angular Frontend to EC2 using Docker
-
 on:
   push:
     branches:
@@ -41,14 +40,15 @@ jobs:
 
       - name: Deploy on EC2
         uses: appleboy/ssh-action@master
-        with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_KEY }}
-        port: 22
-        timeout: 60s  
-        script: |
-          docker pull ${{ secrets.DOCKER_USER }}/angular-frontend:latest
-          docker stop angular-frontend || true
-          docker rm angular-frontend || true
-          docker run -d --name angular-frontend -p 80:80 ${{ secrets.DOCKER_USER }}/angular-frontend:latest
+        with: 
+           host: ${{ secrets.EC2_HOST }}
+           username: ${{ secrets.EC2_USER }}
+           key: ${{ secrets.EC2_KEY }}
+           port: 22
+           timeout: 60s   # include 's' for seconds
+           script: |
+              docker pull ${{ secrets.DOCKER_USER }}/angular-frontend:latest
+              docker stop angular-frontend || true
+              docker rm angular-frontend || true
+              docker run -d --name angular-frontend -p 80:80 ${{ secrets.DOCKER_USER }}/angular-frontend:latest
+
