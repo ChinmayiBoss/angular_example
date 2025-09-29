@@ -16,12 +16,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-          
+
       - name: Install & Build
         run: |
           npm install --force
           npm run build
-          
+
+      - name: Docker Logout
+        run: docker logout
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -35,7 +38,7 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKER_USER }}/angular-frontend:latest
-          
+
       - name: Deploy on EC2
         uses: appleboy/ssh-action@master
         with:
@@ -43,7 +46,12 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
+            # Pull the latest Docker image
             docker pull ${{ secrets.DOCKER_USER }}/angular-frontend:latest
+
+            # Stop and remove existing container if it exists
             docker stop angular-frontend || true
             docker rm angular-frontend || true
+
+            # Run container in detached mode on port 80
             docker run -d --name angular-frontend -p 80:80 ${{ secrets.DOCKER_USER }}/angular-frontend:latest
