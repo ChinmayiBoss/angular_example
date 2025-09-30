@@ -45,10 +45,14 @@ jobs:
            username: ${{ secrets.EC2_USER }}
            key: ${{ secrets.EC2_KEY }}
            port: 22
-           timeout: 60s   # include 's' for seconds
+           timeout: 60s
            script: |
+              # Pull latest Docker image
               docker pull ${{ secrets.DOCKER_USER }}/angular-frontend:latest
+
+              # Stop and remove existing container
               docker stop angular-frontend || true
               docker rm angular-frontend || true
-              docker run -d --name angular-frontend -p 80:80 ${{ secrets.DOCKER_USER }}/angular-frontend:latest
 
+              # Run container on port 8080 (avoid conflict with host Nginx)
+              docker run -d --name angular-frontend -p 8080:80 ${{ secrets.DOCKER_USER }}/angular-frontend:latest
